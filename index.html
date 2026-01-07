@@ -1,1 +1,1574 @@
-caca
+<!doctype html>
+<html lang="fr" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomBowl - Nutrition animale personnalisée</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    @keyframes fade-in-up {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes float-subtle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .animate-fade-in-up {
+      animation: fade-in-up 0.6s ease-out;
+    }
+    
+    .product-card {
+      transition: all 0.3s ease;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+    
+    .team-card {
+      transition: all 0.3s ease;
+    }
+    
+    .team-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .chatbot-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+    }
+    
+    .chatbot-button {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .chatbot-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    .chatbot-window {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 380px;
+      height: 520px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      background: white;
+    }
+    
+    .chatbot-window.active {
+      display: flex;
+      animation: fade-in-up 0.3s ease;
+    }
+    
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    
+    .chat-message {
+      margin-bottom: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 85%;
+      animation: fade-in-up 0.3s ease;
+    }
+    
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease;
+    }
+    
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #F8F9FA 0%, #FFFFFF 100%);
+    }
+    
+    .hero-image {
+      animation: float-subtle 6s ease-in-out infinite;
+    }
+    
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: scale(1.05);
+    }
+    
+    .button-primary {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .button-primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .button-primary:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .product-image {
+      transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover .product-image {
+      transform: scale(1.05);
+    }
+    
+    .value-icon {
+      transition: transform 0.3s ease;
+    }
+    
+    .value-card:hover .value-icon {
+      transform: rotate(10deg) scale(1.1);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto" style="margin: 0; padding: 0;">
+  <div id="app" class="w-full h-full" style="min-height: 100%;"><!-- Navigation -->
+   <nav id="navbar" class="sticky top-0 z-50 bg-white shadow-sm backdrop-blur-lg" style="background: rgba(255, 255, 255, 0.98);">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+     <div class="flex items-center justify-between">
+      <div id="brand-name" class="text-2xl font-bold"><span>BloomBowl</span>
+      </div>
+      <div class="hidden md:flex items-center gap-8"><a href="#accueil" class="nav-link text-sm font-medium">Accueil</a> <a href="#recettes" class="nav-link text-sm font-medium">Nos recettes</a> <a href="#abonnements" class="nav-link text-sm font-medium">Abonnements</a> <a href="#histoire" class="nav-link text-sm font-medium">Notre histoire</a> <a href="#contact" class="nav-link text-sm font-medium">Contact</a>
+      </div>
+      <div class="flex items-center gap-3"><button id="cart-button" class="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        </svg><span id="cart-count" class="absolute -top-1 -right-1 min-w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center text-white">0</span> </button> <button id="profile-button" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg></button>
+      </div>
+     </div>
+    </div>
+   </nav><!-- Hero Section -->
+   <main>
+    <section id="accueil" class="py-20 px-6 gradient-bg">
+     <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+       <div class="animate-fade-in-up">
+        <h1 id="hero-title" class="text-5xl md:text-6xl font-bold mb-6 leading-tight">Des croquettes adaptées aux vrais besoins</h1>
+        <p id="hero-subtitle" class="text-xl mb-8 opacity-80 leading-relaxed">Nutrition transparente et personnalisée pour chiens et chats</p><button id="hero-cta" class="button-primary px-8 py-4 rounded-lg font-semibold text-lg text-white shadow-lg relative"> Découvrir nos recettes </button>
+       </div>
+       <div class="hero-image"><img src="https://tomojo.co/cdn/shop/files/PHOTOS_FORMATS_SITE3.jpg?v=1616750757&amp;width=1200" alt="Chien et chat heureux" class="w-full rounded-2xl shadow-2xl" onerror="this.src=''; this.alt='Image non disponible'; this.outerHTML='<div class=\'text-center text-9xl\'>🐕🐱</div>';">
+       </div>
+      </div>
+     </div>
+    </section><!-- Valeurs -->
+    <section class="py-20 px-6 scroll-reveal" style="background: linear-gradient(135deg, #FFF1F2 0%, #FFFFFF 100%)">
+     <div class="max-w-7xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-4">Nos valeurs</h2>
+      <p class="text-center text-lg mb-16 opacity-70 max-w-2xl mx-auto">Ce qui guide notre démarche au quotidien</p>
+      <div class="grid md:grid-cols-4 gap-8">
+       <div class="value-card text-center p-8 rounded-xl bg-white border-2 border-gray-300 shadow-md hover:shadow-xl transition-all">
+        <div class="value-icon text-5xl mb-4">
+         🔍
+        </div>
+        <h3 class="text-xl font-bold mb-3">Transparence</h3>
+        <p class="text-sm leading-relaxed opacity-80">On dit ce qu'il y a dans le bol. Et surtout, ce qu'il n'y a pas.</p>
+       </div>
+       <div class="value-card text-center p-8 rounded-xl bg-white border-2 border-gray-300 shadow-md hover:shadow-xl transition-all">
+        <div class="value-icon text-5xl mb-4">
+         ❤️
+        </div>
+        <h3 class="text-xl font-bold mb-3">Bien-être réel</h3>
+        <p class="text-sm leading-relaxed opacity-80">Pas de promesses floues. Juste des résultats visibles.</p>
+       </div>
+       <div class="value-card text-center p-8 rounded-xl bg-white border-2 border-gray-300 shadow-md hover:shadow-xl transition-all">
+        <div class="value-icon text-5xl mb-4">
+         🎯
+        </div>
+        <h3 class="text-xl font-bold mb-3">Adaptation</h3>
+        <p class="text-sm leading-relaxed opacity-80">Chaque animal est différent. Son bol devrait l'être aussi.</p>
+       </div>
+       <div class="value-card text-center p-8 rounded-xl bg-white border-2 border-gray-300 shadow-md hover:shadow-xl transition-all">
+        <div class="value-icon text-5xl mb-4">
+         ���
+        </div>
+        <h3 class="text-xl font-bold mb-3">Simplicité</h3>
+        <p class="text-sm leading-relaxed opacity-80">Nourrir son compagnon, c'est un geste d'attention.</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Assistant Mimi -->
+    <section class="py-20 px-6 scroll-reveal gradient-bg">
+     <div class="max-w-4xl mx-auto text-center">
+      <div class="text-7xl mb-6">
+       🐱
+      </div>
+      <h2 class="text-4xl font-bold mb-6">Rencontrez Mimi, votre assistante nutrition</h2>
+      <p class="text-lg mb-8 leading-relaxed opacity-80 max-w-2xl mx-auto">Elle pose les bonnes questions et conseille la recette idéale pour que votre animal trouve son bol parfait</p><button onclick="document.querySelector('.chatbot-button').click()" class="button-primary px-8 py-4 rounded-lg font-semibold text-lg text-white shadow-lg relative"> Discuter avec Mimi </button>
+     </div>
+    </section><!-- Nos Recettes -->
+    <section id="recettes" class="py-20 px-6 scroll-reveal" style="background: linear-gradient(135deg, #FCE7F3 0%, #FFFFFF 100%)">
+     <div class="max-w-7xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-4">Nos recettes</h2>
+      <p class="text-center text-lg mb-16 opacity-70">Des formules clean, testées et approuvées</p><!-- Chiens -->
+      <div class="mb-20">
+       <h3 class="text-3xl font-bold mb-10 flex items-center gap-3"><span>🐕</span> <span>Pour les chiens</span></h3>
+       <div class="grid md:grid-cols-3 gap-8">
+        <div class="product-card rounded-xl overflow-hidden shadow-lg bg-white border-3 cursor-pointer" style="border: 3px solid #FFC0CB;" onclick="showProductDetails('chien-poulet')">
+         <div class="h-64 bg-gray-50 flex items-center justify-center overflow-hidden"><img src="https://tomojo.co/cdn/shop/products/Sanstitre_29_1_700x.png?v=1765358551" alt="Poulet et riz" class="product-image w-full h-full object-contain" onerror="this.src=''; this.alt='Image non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-6xl\'>🍗</div>';">
+         </div>
+         <div class="p-6">
+          <h4 class="text-2xl font-bold mb-2">Poulet &amp; Riz</h4>
+          <p class="mb-3 text-sm opacity-70">Pour chiens énergiques et sportifs</p>
+          <p class="text-sm mb-4 opacity-60">Poulet 40%, riz complet, légumes de saison</p>
+          <div class="flex items-center justify-between"><span class="text-2xl font-bold">24,90€</span> <button class="add-to-cart button-primary px-6 py-3 rounded-lg font-semibold text-white shadow-md relative" data-product="Poulet &amp; Riz Chien" data-price="24.90" onclick="event.stopPropagation(); addToCart('Poulet &amp; Riz Chien', '24.90');"> Ajouter </button>
+          </div>
+         </div>
+        </div>
+        <div class="product-card rounded-xl overflow-hidden shadow-lg bg-white border-3 cursor-pointer" style="border: 3px solid #FFC0CB;" onclick="showProductDetails('chien-boeuf')">
+         <div class="h-64 bg-gray-50 flex items-center justify-center overflow-hidden"><img src="https://tomojo.co/cdn/shop/files/PACKSHOT_TOMOJO_5b57950b-b634-4414-bef0-a07eb0f16fb4_700x.png?v=1763544302" alt="Boeuf et légumes" class="product-image w-full h-full object-contain" onerror="this.src=''; this.alt='Image non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-6xl\'>🥩</div>';">
+         </div>
+         <div class="p-6">
+          <h4 class="text-2xl font-bold mb-2">Bœuf &amp; Légumes</h4>
+          <p class="mb-3 text-sm opacity-70">Pour chiens à digestion sensible</p>
+          <p class="text-sm mb-4 opacity-60">Bœuf 35%, légumes variés, probiotiques</p>
+          <div class="flex items-center justify-between"><span class="text-2xl font-bold">26,90€</span> <button class="add-to-cart button-primary px-6 py-3 rounded-lg font-semibold text-white shadow-md relative" data-product="Bœuf &amp; Légumes Chien" data-price="26.90" onclick="event.stopPropagation(); addToCart('Bœuf &amp; Légumes Chien', '26.90');"> Ajouter </button>
+          </div>
+         </div>
+        </div>
+        <div class="product-card rounded-xl overflow-hidden shadow-lg bg-white border-3 cursor-pointer" style="border: 3px solid #FFC0CB;" onclick="showProductDetails('chien-saumon')">
+         <div class="h-64 bg-gray-50 flex items-center justify-center overflow-hidden"><img src="https://tomojo.co/cdn/shop/files/PACKSHOT_TOMOJO_5_700x.png?v=1754397597" alt="Saumon et patate douce" class="product-image w-full h-full object-contain" onerror="this.src=''; this.alt='Image non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-6xl\'>🐟</div>';">
+         </div>
+         <div class="p-6">
+          <h4 class="text-2xl font-bold mb-2">Saumon &amp; Patate douce</h4>
+          <p class="mb-3 text-sm opacity-70">Pour chiens seniors et articulations</p>
+          <p class="text-sm mb-4 opacity-60">Saumon 38%, patate douce, oméga-3, glucosamine</p>
+          <div class="flex items-center justify-between"><span class="text-2xl font-bold">27,90€</span> <button class="add-to-cart button-primary px-6 py-3 rounded-lg font-semibold text-white shadow-md relative" data-product="Saumon &amp; Patate douce Chien" data-price="27.90" onclick="event.stopPropagation(); addToCart('Saumon &amp; Patate douce Chien', '27.90');"> Ajouter </button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Chats -->
+      <div>
+       <h3 class="text-3xl font-bold mb-10 flex items-center gap-3"><span>🐱</span> <span>Pour les chats</span></h3>
+       <div class="grid md:grid-cols-3 gap-8">
+        <div class="product-card rounded-xl overflow-hidden shadow-lg bg-white border-3 cursor-pointer" style="border: 3px solid #FFC0CB;" onclick="showProductDetails('chat-poulet')">
+         <div class="h-64 bg-gray-50 flex items-center justify-center overflow-hidden"><img src="https://tomojo.co/cdn/shop/files/Croquettes_chat_Tomojo_1_800x.png?v=1754398382" alt="Poulet et courgette" class="product-image w-full h-full object-contain" onerror="this.src=''; this.alt='Image non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-6xl\'>🐔</div>';">
+         </div>
+         <div class="p-6">
+          <h4 class="text-2xl font-bold mb-2">Poulet &amp; Courgette</h4>
+          <p class="mb-3 text-sm opacity-70">Pour chats adultes en bonne santé</p>
+          <p class="text-sm mb-4 opacity-60">Volaille 42%, courgette, taurine, cranberries</p>
+          <div class="flex items-center justify-between"><span class="text-2xl font-bold">22,90€</span> <button class="add-to-cart button-primary px-6 py-3 rounded-lg font-semibold text-white shadow-md relative" data-product="Poulet &amp; Courgette Chat" data-price="22.90" onclick="event.stopPropagation(); addToCart('Poulet &amp; Courgette Chat', '22.90');"> Ajouter </button>
+          </div>
+         </div>
+        </div>
+        <div class="product-card rounded-xl overflow-hidden shadow-lg bg-white border-3 cursor-pointer" style="border: 3px solid #FFC0CB;" onclick="showProductDetails('chat-thon')">
+         <div class="h-64 bg-gray-50 flex items-center justify-center overflow-hidden"><img src="https://tomojo.co/cdn/shop/files/PACKSHOT_TOMOJO_1_680666bf-285d-48ea-86e1-38238dbf9ce0_800x.png?v=1763544352" alt="Thon et quinoa" class="product-image w-full h-full object-contain" onerror="this.src=''; this.alt='Image non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-6xl\'>🐠</div>';">
+         </div>
+         <div class="p-6">
+          <h4 class="text-2xl font-bold mb-2">Thon &amp; Quinoa</h4>
+          <p class="mb-3 text-sm opacity-70">Pour chats stérilisés et contrôle du poids</p>
+          <p class="text-sm mb-4 opacity-60">Thon 40%, quinoa, fibres, L-carnitine</p>
+          <div class="flex items-center justify-between"><span class="text-2xl font-bold">23,90€</span> <button class="add-to-cart button-primary px-6 py-3 rounded-lg font-semibold text-white shadow-md relative" data-product="Thon &amp; Quinoa Chat" data-price="23.90" onclick="event.stopPropagation(); addToCart('Thon &amp; Quinoa Chat', '23.90');"> Ajouter </button>
+          </div>
+         </div>
+        </div>
+        <div class="product-card rounded-xl overflow-hidden shadow-lg bg-white border-3 cursor-pointer" style="border: 3px solid #FFC0CB;" onclick="showProductDetails('chat-dinde')">
+         <div class="h-64 bg-gray-50 flex items-center justify-center overflow-hidden"><img src="https://tomojo.co/cdn/shop/products/Sanstitre_28_1_700x.png?v=1765197312" alt="Dinde et carotte" class="product-image w-full h-full object-contain" onerror="this.src=''; this.alt='Image non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-6xl\'>🦃</div>';">
+         </div>
+         <div class="p-6">
+          <h4 class="text-2xl font-bold mb-2">Dinde &amp; Carotte</h4>
+          <p class="mb-3 text-sm opacity-70">Pour un pelage brillant et soyeux</p>
+          <p class="text-sm mb-4 opacity-60">Dinde 38%, carotte, huile de saumon, biotine</p>
+          <div class="flex items-center justify-between"><span class="text-2xl font-bold">24,90€</span> <button class="add-to-cart button-primary px-6 py-3 rounded-lg font-semibold text-white shadow-md relative" data-product="Dinde &amp; Carotte Chat" data-price="24.90" onclick="event.stopPropagation(); addToCart('Dinde &amp; Carotte Chat', '24.90');"> Ajouter </button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Abonnements -->
+    <section id="abonnements" class="py-20 px-6 scroll-reveal gradient-bg">
+     <div class="max-w-7xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-4">Nos formules d'abonnement</h2>
+      <p class="text-lg text-center mb-16 opacity-70 max-w-2xl mx-auto">Livraison flexible, personnalisation totale, sans engagement</p>
+      <div class="grid md:grid-cols-3 gap-8">
+       <div class="rounded-xl p-8 shadow-lg bg-white transition-transform hover:scale-105" style="border: 3px solid #FFC0CB;">
+        <h3 class="text-2xl font-bold mb-4">Starter</h3>
+        <div class="mb-6"><span class="text-4xl font-bold">29€</span> <span class="text-lg opacity-70">/mois</span>
+        </div>
+        <p class="text-sm opacity-60 mb-4">Soit 7,25€/semaine</p>
+        <ul class="space-y-3 mb-8">
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Livraison hebdomadaire</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>1 recette personnalisée</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Pause ou annulation gratuite</span></li>
+        </ul><button class="button-primary w-full py-3 rounded-lg font-semibold text-white shadow-md relative"> Choisir Starter </button>
+       </div>
+       <div class="rounded-xl p-8 shadow-2xl bg-white transform scale-105 relative" style="border: 4px solid #FF69B4;">
+        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full font-bold text-white text-sm shadow-md bg-gradient-to-r from-yellow-400 to-orange-400">
+         ⭐ POPULAIRE
+        </div>
+        <h3 class="text-2xl font-bold mb-4 mt-2">Premium</h3>
+        <div class="mb-6"><span class="text-4xl font-bold">49€</span> <span class="text-lg opacity-70">/mois</span>
+        </div>
+        <p class="text-sm opacity-60 mb-4">Soit 12,25€/semaine</p>
+        <ul class="space-y-3 mb-8">
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Livraison bi-hebdomadaire</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>2 recettes personnalisées</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Friandises offertes</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Suivi nutritionnel</span></li>
+        </ul><button class="button-primary w-full py-3 rounded-lg font-semibold text-white shadow-md relative"> Choisir Premium </button>
+       </div>
+       <div class="rounded-xl p-8 shadow-lg bg-white transition-transform hover:scale-105" style="border: 3px solid #FFC0CB;">
+        <div class="flex items-center gap-2 mb-4">
+         <h3 class="text-2xl font-bold">Royal</h3><span class="text-2xl">👑</span>
+        </div>
+        <div class="mb-6"><span class="text-4xl font-bold">69€</span> <span class="text-lg opacity-70">/mois</span>
+        </div>
+        <p class="text-sm opacity-60 mb-4">Soit 17,25€/semaine</p>
+        <ul class="space-y-3 mb-8">
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Livraison quotidienne</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>3 recettes + rotation</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Suivi vétérinaire inclus</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Friandises premium</span></li>
+         <li class="flex items-start gap-2 text-sm"><span class="text-green-600 font-bold">✓</span> <span>Service prioritaire 24/7</span></li>
+        </ul><button class="button-primary w-full py-3 rounded-lg font-semibold text-white shadow-md relative"> Choisir Royal </button>
+       </div>
+      </div>
+     </div>
+    </section><!-- CTA -->
+    <section class="py-20 px-6 scroll-reveal bg-white">
+     <div class="max-w-4xl mx-auto text-center rounded-2xl p-12 shadow-lg" style="background: linear-gradient(135deg, #EC4899 0%, #F97316 100%);">
+      <h2 class="text-4xl font-bold mb-6 text-white">Prêt à faire du bien à votre compagnon ?</h2><button id="main-cta" class="button-primary px-8 py-4 rounded-lg font-semibold text-lg shadow-lg relative bg-white"> Trouver la recette idéale </button>
+     </div>
+    </section><!-- Notre Histoire -->
+    <section id="histoire" class="py-20 px-6 scroll-reveal gradient-bg">
+     <div class="max-w-5xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-4">Notre Histoire</h2>
+      <p class="text-center text-lg mb-16 opacity-70">Deux amies. Un constat. Une promesse simple.</p>
+      <div class="rounded-xl p-10 shadow-md mb-16 bg-white">
+       <p class="text-lg leading-relaxed mb-4">Tout commence dans une petite ville où <strong>Margaux</strong> et <strong>Elouanne</strong>, deux amies d'enfance, passent leurs week-ends à promener les chiens et les chats du refuge local. Elles apprennent à reconnaître les regards fatigués, les poils ternes, les sensibilités digestives.</p>
+       <p class="text-lg leading-relaxed mb-4">Très tôt, elles comprennent une chose : <strong>L'amour ne suffit pas.</strong></p>
+       <p class="text-lg leading-relaxed mb-4">Beaucoup de ces animaux souffrent en silence �� cause d'une alimentation inadaptée, trop industrielle, trop opaque. Après leurs études, elles se heurtent au marché : promesses marketing floues, compositions incompréhensibles, additifs partout.</p>
+       <p class="text-lg leading-relaxed mb-4"><strong>Alors, elles décident d'agir.</strong></p>
+       <p class="text-lg leading-relaxed mb-4">Nuits blanches à analyser les compositions. Rendez-vous avec des vétérinaires-nutritionnistes. Tests de recettes. Et puis, un soir, <strong>BloomBowl prend vie.</strong></p>
+       <p class="text-lg leading-relaxed">Des croquettes clean, traçables, adaptées aux vrais besoins de chaque animal. Un univers simple, rassurant. Et Mimi, l'assistante qui pose les bonnes questions pour que chaque animal trouve son bol parfait.</p>
+      </div><!-- Équipe -->
+      <h3 class="text-3xl font-bold text-center mb-12">Notre Équipe</h3>
+      <div class="grid md:grid-cols-2 gap-8 mb-16">
+       <div class="team-card rounded-xl p-8 shadow-md bg-white border-2 border-gray-200">
+        <div class="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden bg-gray-200"><img src="https://media.licdn.com/dms/image/v2/D4E03AQG2kEFsorRkAw/profile-displayphoto-crop_800_800/B4EZr6qNUOKgAI-/0/1736294400000?e=1767225600&amp;v=beta&amp;t=FqUbpIJ1mkI6zstOrU55yfyTbp11qNMfLiHx_6WRz48" alt="Margaux" class="w-full h-full object-cover" onerror="this.src=''; this.alt='Photo non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-5xl\'>👩‍💼</div>';">
+        </div>
+        <h4 class="text-2xl font-bold mb-2 text-center">Margaux</h4>
+        <p class="text-center font-semibold mb-3 opacity-70">Co-fondatrice</p>
+        <p class="text-sm leading-relaxed text-center opacity-80">L'œil sensible et le cœur sur la main. Elle veille à la cohérence et à la douceur de l'univers BloomBowl.</p>
+       </div>
+       <div class="team-card rounded-xl p-8 shadow-md bg-white border-2 border-gray-200">
+        <div class="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden bg-gray-200"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrQY8i39MPeIz7b-hPNqEfiK3fkbDV9PQ2Iw&amp;s" alt="Elouanne" class="w-full h-full object-cover" onerror="this.src=''; this.alt='Photo non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-5xl\'>👩‍🔬</div>';">
+        </div>
+        <h4 class="text-2xl font-bold mb-2 text-center">Elouanne</h4>
+        <p class="text-center font-semibold mb-3 opacity-70">Co-fondatrice</p>
+        <p class="text-sm leading-relaxed text-center opacity-80">L'esprit analytique. Elle scrute, questionne, teste, ajuste… pour des recettes vraiment clean.</p>
+       </div>
+       <div class="team-card rounded-xl p-8 shadow-md bg-white border-2 border-gray-200">
+        <div class="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden bg-gray-200 flex items-center justify-center text-5xl">
+         👩‍⚕️
+        </div>
+        <h4 class="text-2xl font-bold mb-2 text-center">Laura</h4>
+        <p class="text-center font-semibold mb-3 opacity-70">Vétérinaire partenaire</p>
+        <p class="text-sm leading-relaxed text-center opacity-80">Experte en nutrition animale. C'est elle qui valide, ajuste et garantit la qualité nutritionnelle des formules.</p>
+       </div>
+       <div class="team-card rounded-xl p-8 shadow-md bg-white border-2 border-gray-200">
+        <div class="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden bg-gray-200"><img src="https://media.licdn.com/dms/image/v2/D4E03AQEhULQ2EHIdNA/profile-displayphoto-scale_200_200/B4EZmlFLQlHMAg-/0/1736294400000?e=2147483647&amp;v=beta&amp;t=iKP70p9_1x_sGQ5QeMZ5FlFGzu2xNa3P1RCpvoWjCaw" alt="Joséphine" class="w-full h-full object-cover" onerror="this.src=''; this.alt='Photo non disponible'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-5xl\'>👩‍🌾</div>';">
+        </div>
+        <h4 class="text-2xl font-bold mb-2 text-center">Joséphine</h4>
+        <p class="text-center font-semibold mb-3 opacity-70">Responsable du chenil partenaire</p>
+        <p class="text-sm leading-relaxed text-center opacity-80">L'observatrice du quotidien. Elle voit ce que les animaux ressentent et nous aide à nous améliorer.</p>
+       </div>
+      </div><!-- Chiffres -->
+      <h3 class="text-3xl font-bold text-center mb-12">Chiffres Clés</h3>
+      <div class="grid md:grid-cols-4 gap-6 text-center">
+       <div class="stat-card p-6 rounded-xl shadow-md bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="text-4xl font-bold mb-2">
+         +120
+        </div>
+        <p class="text-sm opacity-70">Animaux accompagnés</p>
+       </div>
+       <div class="stat-card p-6 rounded-xl shadow-md bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="text-4xl font-bold mb-2">
+         94%
+        </div>
+        <p class="text-sm opacity-70">D'amélioration en 6 semaines</p>
+       </div>
+       <div class="stat-card p-6 rounded-xl shadow-md bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="text-4xl font-bold mb-2">
+         100%
+        </div>
+        <p class="text-sm opacity-70">Sans additifs artificiels</p>
+       </div>
+       <div class="stat-card p-6 rounded-xl shadow-md bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="text-4xl font-bold mb-2">
+         1
+        </div>
+        <p class="text-sm opacity-70">Assistante nutrition - Mimi</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Avis Clients -->
+    <section class="py-20 px-6 scroll-reveal bg-white">
+     <div class="max-w-7xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-4">Avis de nos clients</h2>
+      <p class="text-center text-lg mb-16 opacity-70">Ce qu'ils pensent de BloomBowl</p>
+      <div class="grid md:grid-cols-3 gap-8">
+       <div class="rounded-xl p-6 shadow-lg bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="flex items-center gap-3 mb-4">
+         <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
+          👤
+         </div>
+         <div>
+          <div class="font-bold">
+           Sophie M.
+          </div>
+          <div class="text-yellow-500 text-sm">
+           ⭐⭐⭐⭐⭐
+          </div>
+         </div>
+        </div>
+        <p class="text-sm leading-relaxed italic">"Mon golden retriever avait des problèmes de digestion depuis des mois. En 3 semaines avec Bœuf &amp; Légumes, tout est rentré dans l'ordre. Merci BloomBowl !"</p>
+       </div>
+       <div class="rounded-xl p-6 shadow-lg bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="flex items-center gap-3 mb-4">
+         <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
+          👤
+         </div>
+         <div>
+          <div class="font-bold">
+           Thomas L.
+          </div>
+          <div class="text-yellow-500 text-sm">
+           ⭐⭐⭐⭐⭐
+          </div>
+         </div>
+        </div>
+        <p class="text-sm leading-relaxed italic">"Mon chat stérilisé avait pris du poids. Avec Thon &amp; Quinoa et les conseils de Mimi, il a retrouvé sa ligne en 2 mois. Top qualité !"</p>
+       </div>
+       <div class="rounded-xl p-6 shadow-lg bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="flex items-center gap-3 mb-4">
+         <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
+          👤
+         </div>
+         <div>
+          <div class="font-bold">
+           Marie D.
+          </div>
+          <div class="text-yellow-500 text-sm">
+           ⭐⭐⭐⭐⭐
+          </div>
+         </div>
+        </div>
+        <p class="text-sm leading-relaxed italic">"Enfin des croquettes clean ! Ma chienne de 12 ans est plus vive depuis qu'elle mange Saumon &amp; Patate douce. Son pelage est magnifique."</p>
+       </div>
+       <div class="rounded-xl p-6 shadow-lg bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="flex items-center gap-3 mb-4">
+         <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
+          👤
+         </div>
+         <div>
+          <div class="font-bold">
+           Lucas P.
+          </div>
+          <div class="text-yellow-500 text-sm">
+           ⭐⭐⭐⭐⭐
+          </div>
+         </div>
+        </div>
+        <p class="text-sm leading-relaxed italic">"L'abonnement Premium est parfait. Livraison rapide, recettes variées, et Mimi répond à toutes mes questions. Je recommande à 100% !"</p>
+       </div>
+       <div class="rounded-xl p-6 shadow-lg bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="flex items-center gap-3 mb-4">
+         <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
+          👤
+         </div>
+         <div>
+          <div class="font-bold">
+           Camille R.
+          </div>
+          <div class="text-yellow-500 text-sm">
+           ⭐⭐⭐⭐⭐
+          </div>
+         </div>
+        </div>
+        <p class="text-sm leading-relaxed italic">"Mes deux chats adorent Poulet &amp; Courgette. Plus de problèmes urinaires depuis qu'on a changé. La composition est vraiment transparente."</p>
+       </div>
+       <div class="rounded-xl p-6 shadow-lg bg-white" style="border: 3px solid #FFC0CB;">
+        <div class="flex items-center gap-3 mb-4">
+         <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
+          👤
+         </div>
+         <div>
+          <div class="font-bold">
+           Julien B.
+          </div>
+          <div class="text-yellow-500 text-sm">
+           ⭐⭐⭐⭐⭐
+          </div>
+         </div>
+        </div>
+        <p class="text-sm leading-relaxed italic">"Mon berger allemand est plus énergique et son poil brille. Poulet &amp; Riz est devenu son plat préféré. Merci pour cette qualité !"</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Newsletter -->
+    <section class="py-20 px-6 scroll-reveal" style="background: linear-gradient(135deg, #FFF1F2 0%, #FFFFFF 100%)">
+     <div class="max-w-3xl mx-auto text-center rounded-xl p-10 shadow-md bg-gradient-to-br from-gray-50 to-white">
+      <h2 class="text-3xl font-bold mb-4">Rejoignez notre newsletter</h2>
+      <p class="text-lg mb-8 opacity-70">Des conseils nutrition, des astuces bien-être et des surprises</p>
+      <form id="newsletter-form" class="flex gap-3 max-w-xl mx-auto"><label for="newsletter-email" class="sr-only">Adresse email</label> <input type="email" id="newsletter-email" placeholder="votre-email@exemple.fr" required class="flex-1 px-6 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500"> <button type="submit" class="button-primary px-8 py-3 rounded-lg font-semibold whitespace-nowrap text-white shadow-md relative"> S'inscrire </button>
+      </form>
+      <div id="newsletter-message" class="mt-4 font-semibold hidden"></div>
+     </div>
+    </section><!-- Contact -->
+    <section id="contact" class="py-20 px-6 scroll-reveal gradient-bg">
+     <div class="max-w-5xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-4">Nous Contacter</h2>
+      <p class="text-center text-lg mb-16 opacity-70">Une question ? Un doute ? On adore discuter.</p>
+      <div class="grid md:grid-cols-2 gap-10">
+       <div class="rounded-xl p-8 shadow-md bg-white">
+        <h3 class="text-2xl font-bold mb-6">Envoyez-nous un message</h3>
+        <form id="contact-form" class="space-y-5">
+         <div><label for="contact-name" class="block mb-2 font-semibold text-sm">Votre nom</label> <input type="text" id="contact-name" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+         </div>
+         <div><label for="contact-email" class="block mb-2 font-semibold text-sm">Votre email</label> <input type="email" id="contact-email" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+         </div>
+         <div><label for="contact-message" class="block mb-2 font-semibold text-sm">Votre message</label> <textarea id="contact-message" rows="4" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500"></textarea>
+         </div><button type="submit" class="button-primary w-full py-3 rounded-lg font-semibold text-white shadow-md relative"> Envoyer </button>
+        </form>
+        <div id="contact-message-result" class="mt-4 font-semibold hidden"></div>
+       </div>
+       <div>
+        <div class="rounded-xl p-8 shadow-md bg-white mb-6">
+         <h3 class="text-2xl font-bold mb-6">Suivez-nous</h3>
+         <div class="space-y-4"><a href="https://instagram.com/bloombowl" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+           <div class="text-3xl">
+            📸
+           </div>
+           <div>
+            <div class="font-semibold">
+             Instagram
+            </div>
+            <div class="text-sm opacity-70">
+             @bloombowl
+            </div>
+           </div></a> <a href="https://linkedin.com/company/bloombowl" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+           <div class="text-3xl">
+            💼
+           </div>
+           <div>
+            <div class="font-semibold">
+             LinkedIn
+            </div>
+            <div class="text-sm opacity-70">
+             Bloombowl
+            </div>
+           </div></a>
+         </div>
+        </div>
+        <div class="rounded-xl p-8 shadow-md bg-white">
+         <h4 class="font-bold text-xl mb-4">Infos pratiques</h4>
+         <div class="space-y-3 text-sm">
+          <p class="flex items-center gap-3"><span class="text-2xl">📧</span> <span>contact@bloombowl.fr</span></p>
+          <p class="flex items-center gap-3"><span class="text-2xl">📞</span> <span>01 23 45 67 89</span></p>
+          <p class="flex items-center gap-3"><span class="text-2xl">🕐</span> <span>Lun-Ven : 9h-18h</span></p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Footer -->
+    <footer class="py-12 px-6 bg-gray-900 text-white">
+     <div class="max-w-7xl mx-auto text-center">
+      <div class="text-2xl font-bold mb-4">
+       BloomBowl
+      </div>
+      <p class="text-sm mb-6 opacity-80">Un bol qui fait éclore la meilleure version de votre compagnon</p>
+      <p class="text-xs opacity-60">© 2024 BloomBowl. Tous droits réservés.</p>
+     </div>
+    </footer>
+   </main><!-- Assistant Mimi (Chat) -->
+   <div class="chatbot-container">
+    <div class="chatbot-window" id="chatbot-window">
+     <div class="p-5 flex items-center justify-between" style="background: linear-gradient(135deg, #EC4899 0%, #F97316 100%);">
+      <div class="flex items-center gap-3">
+       <div class="text-3xl">
+        🐱
+       </div>
+       <div class="text-white">
+        <div class="font-bold text-lg">
+         Mimi
+        </div>
+        <div class="text-sm opacity-90">
+         Assistante nutrition
+        </div>
+       </div>
+      </div><button id="close-chatbot" class="p-2 rounded-lg hover:bg-white/20 transition-colors text-white">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+       </svg></button>
+     </div>
+     <div class="chat-messages" id="chat-messages">
+      <div class="chat-message bg-gray-100">
+       <p class="font-semibold mb-2">Bonjour ! Je suis Mimi 🐱</p>
+       <p class="text-sm mb-3">Je vais vous aider à trouver les croquettes parfaites pour votre compagnon.</p>
+       <p class="text-sm font-medium mb-3">Votre animal est-il un chien ou un chat ?</p>
+       <div class="flex gap-2"><button onclick="handleChatOption('Chien')" class="flex-1 px-4 py-3 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">🐕 Chien</button> <button onclick="handleChatOption('Chat')" class="flex-1 px-4 py-3 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">🐱 Chat</button>
+       </div>
+      </div>
+     </div>
+     <div class="p-4 border-t">
+      <div id="chat-options" class="flex flex-wrap gap-2 mb-3"></div>
+      <form id="chat-form" class="flex gap-2"><label for="chat-input" class="sr-only">Votre message</label> <input type="text" id="chat-input" placeholder="Écrivez votre message..." class="flex-1 px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500 text-sm"> <button type="submit" class="button-primary px-6 py-2 rounded-lg font-semibold text-sm text-white shadow-md relative"> Envoyer </button>
+      </form>
+     </div>
+    </div>
+    <div class="chatbot-button" id="chatbot-button" style="background: linear-gradient(135deg, #EC4899 0%, #F97316 100%);"><span class="text-3xl">🐱</span>
+    </div>
+   </div><!-- Modal Panier -->
+   <div id="cart-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-6" style="background: rgba(0, 0, 0, 0.5);">
+    <div class="rounded-2xl max-w-2xl w-full max-h-[80%] overflow-auto p-8 shadow-2xl bg-white">
+     <div class="flex items-center justify-between mb-6">
+      <h2 class="text-3xl font-bold">Mon panier</h2><button id="close-cart" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+       </svg></button>
+     </div>
+     <div id="cart-items" class="space-y-4 mb-6">
+      <p class="text-center opacity-60 py-8">Votre panier est vide</p>
+     </div>
+     <div class="border-t-2 pt-6">
+      <div class="flex justify-between items-center mb-6"><span class="text-xl font-bold">Total</span> <span id="cart-total" class="text-3xl font-bold">0,00€</span>
+      </div>
+      <div class="mb-6">
+       <h3 class="font-bold text-lg mb-3">Mode de livraison</h3>
+       <div class="space-y-2"><label class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer hover:bg-gray-50"> <input type="radio" name="delivery" value="standard" checked class="w-4 h-4">
+         <div class="flex-1">
+          <div class="font-semibold text-sm">
+           Livraison standard
+          </div>
+          <div class="text-xs opacity-70">
+           3-5 jours ouvrés • Gratuit dès 50€
+          </div>
+         </div><span class="font-bold">4,90€</span> </label> <label class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer hover:bg-gray-50"> <input type="radio" name="delivery" value="express" class="w-4 h-4">
+         <div class="flex-1">
+          <div class="font-semibold text-sm">
+           Livraison express
+          </div>
+          <div class="text-xs opacity-70">
+           24-48h
+          </div>
+         </div><span class="font-bold">9,90€</span> </label>
+       </div>
+      </div>
+      <div class="mb-6">
+       <h3 class="font-bold text-lg mb-3">Moyen de paiement</h3>
+       <div class="grid grid-cols-3 gap-3"><button onclick="selectPayment('card')" class="payment-method p-4 rounded-lg border-2 hover:border-pink-500 transition-all text-center" data-method="card">
+         <div class="text-3xl mb-2">
+          💳
+         </div>
+         <div class="text-xs font-semibold">
+          Carte
+         </div></button> <button onclick="selectPayment('paypal')" class="payment-method p-4 rounded-lg border-2 hover:border-pink-500 transition-all text-center" data-method="paypal">
+         <div class="text-3xl mb-2">
+          🅿️
+         </div>
+         <div class="text-xs font-semibold">
+          PayPal
+         </div></button> <button onclick="selectPayment('apple')" class="payment-method p-4 rounded-lg border-2 hover:border-pink-500 transition-all text-center" data-method="apple">
+         <div class="text-3xl mb-2">
+          🍎
+         </div>
+         <div class="text-xs font-semibold">
+          Apple Pay
+         </div></button>
+       </div>
+      </div><button id="checkout-button" class="button-primary w-full py-4 rounded-lg font-semibold text-lg text-white shadow-md relative"> Procéder au paiement </button>
+     </div>
+    </div>
+   </div><!-- Modal Fiche Produit -->
+   <div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-6" style="background: rgba(0, 0, 0, 0.5);">
+    <div class="rounded-2xl max-w-4xl w-full max-h-[90%] overflow-auto p-8 shadow-2xl bg-white">
+     <div class="flex items-center justify-between mb-6">
+      <h2 id="product-modal-title" class="text-3xl font-bold">Fiche Produit</h2><button id="close-product-modal" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+       </svg></button>
+     </div>
+     <div id="product-modal-content" class="space-y-6"><!-- Contenu dynamique -->
+     </div>
+    </div>
+   </div><!-- Modal Connexion/Inscription -->
+   <div id="profile-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-6" style="background: rgba(0, 0, 0, 0.5);">
+    <div class="rounded-2xl max-w-2xl w-full max-h-[90%] overflow-auto p-8 shadow-2xl bg-white">
+     <div class="flex items-center justify-between mb-6">
+      <h2 id="profile-modal-title" class="text-2xl font-bold">Mon compte</h2><button id="close-profile" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+       </svg></button>
+     </div><!-- Tabs -->
+     <div class="flex gap-2 mb-6 border-b-2"><button id="tab-login" onclick="switchProfileTab('login')" class="px-6 py-3 font-semibold border-b-2 border-pink-500 text-pink-500"> Connexion </button> <button id="tab-register" onclick="switchProfileTab('register')" class="px-6 py-3 font-semibold opacity-60 hover:opacity-100"> Inscription </button>
+     </div><!-- Formulaire Connexion -->
+     <form id="login-form" class="space-y-5">
+      <div><label for="login-email" class="block mb-2 font-semibold text-sm">Votre email</label> <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+      </div>
+      <div><label for="login-password" class="block mb-2 font-semibold text-sm">Votre mot de passe</label> <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+      </div><button type="submit" class="button-primary w-full py-3 rounded-lg font-semibold text-white shadow-md relative"> Se connecter </button>
+     </form><!-- Formulaire Inscription -->
+     <form id="register-form" class="space-y-5 hidden">
+      <div class="grid md:grid-cols-2 gap-4">
+       <div><label for="register-firstname" class="block mb-2 font-semibold text-sm">Prénom</label> <input type="text" id="register-firstname" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+       </div>
+       <div><label for="register-lastname" class="block mb-2 font-semibold text-sm">Nom</label> <input type="text" id="register-lastname" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+       </div>
+      </div>
+      <div><label for="register-email" class="block mb-2 font-semibold text-sm">Email</label> <input type="email" id="register-email" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+      </div>
+      <div><label for="register-password" class="block mb-2 font-semibold text-sm">Mot de passe</label> <input type="password" id="register-password" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+      </div>
+      <div class="border-t-2 pt-6">
+       <h3 class="font-bold text-lg mb-4">Informations sur vos animaux</h3>
+       <div id="animals-container">
+        <div class="animal-info p-4 rounded-lg mb-4" style="background: #FFF1F2;">
+         <div class="grid md:grid-cols-2 gap-4">
+          <div><label class="block mb-2 font-semibold text-sm">Nom de l'animal</label> <input type="text" name="animal-name-0" placeholder="Ex: Max" class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+          </div>
+          <div><label class="block mb-2 font-semibold text-sm">Type</label> <select name="animal-type-0" class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500"> <option value="chien">🐕 Chien</option> <option value="chat">🐱 Chat</option> </select>
+          </div>
+          <div><label class="block mb-2 font-semibold text-sm">Âge (années)</label> <input type="number" name="animal-age-0" min="0" max="25" placeholder="Ex: 3" class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+          </div>
+          <div><label class="block mb-2 font-semibold text-sm">Poids (kg)</label> <input type="number" name="animal-weight-0" min="0" step="0.1" placeholder="Ex: 15" class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+          </div>
+         </div>
+        </div>
+       </div><button type="button" onclick="addAnimal()" class="w-full py-3 rounded-lg font-semibold border-2 border-pink-500 text-pink-500 hover:bg-pink-50 transition-colors"> + Ajouter un autre animal </button>
+      </div><button type="submit" class="button-primary w-full py-3 rounded-lg font-semibold text-white shadow-md relative"> Créer mon compte </button>
+     </form>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_color: '#F8F9FA',
+      text_color: '#1F2937',
+      primary_color: '#EC4899',
+      secondary_color: '#F97316',
+      accent_color: '#BE123C',
+      font_family: 'Inter',
+      font_size: 16,
+      brand_name: 'BloomBowl',
+      hero_title: 'Des croquettes adaptées aux vrais besoins',
+      hero_subtitle: 'Nutrition transparente et personnalisée pour chiens et chats',
+      hero_button: 'Découvrir nos recettes',
+      cta_button: 'Trouver la recette idéale'
+    };
+
+    let cart = [];
+    let chatStep = 0;
+    let chatData = {};
+    let animalCount = 1;
+    let selectedPayment = 'card';
+
+    const productDetails = {
+      'chien-poulet': {
+        name: 'Poulet & Riz',
+        subtitle: 'Pour chiens énergiques et sportifs',
+        price: '24,90€',
+        image: 'https://tomojo.co/cdn/shop/products/Sanstitre_29_1_700x.png?v=1765358551',
+        emoji: '🍗',
+        description: 'Une recette complète et équilibrée, spécialement formulée pour les chiens actifs qui ont besoin d\'une nutrition énergétique.',
+        composition: 'Poulet frais 40%, riz complet 25%, l��gumes de saison 15% (carottes, petits pois), huile de colza 5%, minéraux, vitamines',
+        benefits: [
+          'Protéines de haute qualité pour maintenir la masse musculaire',
+          'Riz complet pour une énergie durable',
+          'Légumes frais riches en fibres et antioxydants',
+          'Sans céréales controversées, sans additifs artificiels'
+        ],
+        analysis: {
+          'Protéines': '28%',
+          'Matières grasses': '16%',
+          'Fibres': '3.5%',
+          'Cendres': '7%',
+          'Humidité': '10%'
+        },
+        feeding: 'Pour un chien de 10kg actif : 150-180g/jour. Ajuster selon l\'activité et le métabolisme.'
+      },
+      'chien-boeuf': {
+        name: 'Bœuf & Légumes',
+        subtitle: 'Pour chiens à digestion sensible',
+        price: '26,90€',
+        image: 'https://tomojo.co/cdn/shop/files/PACKSHOT_TOMOJO_5b57950b-b634-4414-bef0-a07eb0f16fb4_700x.png?v=1763544302',
+        emoji: '🥩',
+        description: 'Formule douce enrichie en probiotiques, conçue pour les chiens avec un système digestif sensible.',
+        composition: 'Bœuf maigre 35%, patate douce 20%, légumes variés 18% (courgette, potiron), probiotiques, prébiotiques, minéraux',
+        benefits: [
+          'Bœuf maigre facilement digestible',
+          'Probiotiques pour soutenir la flore intestinale',
+          'Patate douce et légumes doux pour l\'estomac',
+          'Sans gluten, sans additifs irritants'
+        ],
+        analysis: {
+          'Protéines': '25%',
+          'Matières grasses': '14%',
+          'Fibres': '4%',
+          'Cendres': '6.5%',
+          'Humidité': '10%'
+        },
+        feeding: 'Pour un chien de 10kg sensible : 140-160g/jour. Transition progressive recommandée sur 7 jours.'
+      },
+      'chien-saumon': {
+        name: 'Saumon & Patate douce',
+        subtitle: 'Pour chiens seniors et articulations',
+        price: '27,90€',
+        image: 'https://tomojo.co/cdn/shop/files/PACKSHOT_TOMOJO_5_700x.png?v=1754397597',
+        emoji: '🐟',
+        description: 'Recette premium enrichie en oméga-3 et glucosamine, idéale pour les chiens âgés et le soutien articulaire.',
+        composition: 'Saumon frais 38%, patate douce 22%, huile de poisson, glucosamine, chondroïtine, minéraux, vitamines E et C',
+        benefits: [
+          'Oméga-3 pour réduire l\'inflammation articulaire',
+          'Glucosamine et chondroïtine pour le cartilage',
+          'Protéines de qualité faciles à digérer',
+          'Antioxydants pour ralentir le vieillissement cellulaire'
+        ],
+        analysis: {
+          'Protéines': '26%',
+          'Matières grasses': '15%',
+          'Fibres': '3%',
+          'Cendres': '7%',
+          'Humidité': '10%',
+          'Oméga-3': '1.2%'
+        },
+        feeding: 'Pour un chien senior de 10kg : 130-150g/jour. Adapter selon l\'activité réduite.'
+      },
+      'chat-poulet': {
+        name: 'Poulet & Courgette',
+        subtitle: 'Pour chats adultes en bonne santé',
+        price: '22,90€',
+        image: 'https://tomojo.co/cdn/shop/files/Croquettes_chat_Tomojo_1_800x.png?v=1754398382',
+        emoji: '🐔',
+        description: 'Nutrition complète pour chats adultes, enrichie en taurine essentielle pour la santé cardiaque et visuelle.',
+        composition: 'Volaille fraîche 42%, courgette 12%, taurine, cranberries, minéraux, vitamines A et E',
+        benefits: [
+          'Taux élevé de protéines animales (carnivore strict)',
+          'Taurine pour le cœur et la vision',
+          'Cranberries pour la santé urinaire',
+          'Sans céréales, adapté au métabolisme félin'
+        ],
+        analysis: {
+          'Protéines': '35%',
+          'Matières grasses': '18%',
+          'Fibres': '2.5%',
+          'Cendres': '7.5%',
+          'Humidité': '8%',
+          'Taurine': '0.2%'
+        },
+        feeding: 'Pour un chat de 4kg : 45-55g/jour. Toujours laisser de l\'eau fraîche à disposition.'
+      },
+      'chat-thon': {
+        name: 'Thon & Quinoa',
+        subtitle: 'Pour chats stérilisés et contrôle du poids',
+        price: '23,90€',
+        image: 'https://tomojo.co/cdn/shop/files/PACKSHOT_TOMOJO_1_680666bf-285d-48ea-86e1-38238dbf9ce0_800x.png?v=1763544352',
+        emoji: '🐠',
+        description: 'Formule allégée avec L-carnitine pour aider les chats stérilisés à maintenir un poids optimal.',
+        composition: 'Thon 40%, quinoa 15%, fibres végétales, L-carnitine, minéraux, vitamines B',
+        benefits: [
+          'Teneur réduite en matières grasses (12%)',
+          'L-carnitine pour brûler les graisses',
+          'Fibres pour la satiété',
+          'Prévention des boules de poils'
+        ],
+        analysis: {
+          'Protéines': '33%',
+          'Matières grasses': '12%',
+          'Fibres': '4.5%',
+          'Cendres': '7%',
+          'Humidité': '8%',
+          'L-carnitine': '500mg/kg'
+        },
+        feeding: 'Pour un chat stérilisé de 4kg : 40-50g/jour. Surveiller le poids régulièrement.'
+      },
+      'chat-dinde': {
+        name: 'Dinde & Carotte',
+        subtitle: 'Pour un pelage brillant et soyeux',
+        price: '24,90€',
+        image: 'https://tomojo.co/cdn/shop/products/Sanstitre_28_1_700x.png?v=1765197312',
+        emoji: '🦃',
+        description: 'Enrichie en biotine et huile de saumon pour un pelage magnifique et une peau saine.',
+        composition: 'Dinde 38%, carotte 10%, huile de saumon, biotine, zinc, minéraux, vitamines',
+        benefits: [
+          'Huile de saumon riche en oméga-3 et 6',
+          'Biotine pour renforcer le poil',
+          'Zinc pour la santé de la peau',
+          'Protéines de dinde hypoallergéniques'
+        ],
+        analysis: {
+          'Protéines': '34%',
+          'Matières grasses': '17%',
+          'Fibres': '3%',
+          'Cendres': '7.5%',
+          'Humidité': '8%',
+          'Oméga-6': '2.5%',
+          'Oméga-3': '0.8%'
+        },
+        feeding: 'Pour un chat de 4kg : 45-55g/jour. Résultats visibles après 4-6 semaines.'
+      }
+    };
+
+    async function onConfigChange(config) {
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const accentColor = config.accent_color || defaultConfig.accent_color;
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      
+      document.body.style.backgroundColor = backgroundColor;
+      document.body.style.color = textColor;
+      
+      const brandName = document.getElementById('brand-name');
+      brandName.textContent = config.brand_name || defaultConfig.brand_name;
+      brandName.style.color = primaryColor;
+      brandName.style.fontFamily = `${customFont}, sans-serif`;
+      
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.style.color = textColor;
+        link.style.fontSize = `${baseSize * 0.875}px`;
+      });
+      
+      document.querySelectorAll('.nav-link::after').forEach(el => {
+        el.style.backgroundColor = primaryColor;
+      });
+      
+      document.getElementById('cart-button').style.color = textColor;
+      document.getElementById('profile-button').style.color = textColor;
+      
+      const cartBadge = document.getElementById('cart-count');
+      cartBadge.style.backgroundColor = primaryColor;
+      
+      const heroTitle = document.getElementById('hero-title');
+      heroTitle.textContent = config.hero_title || defaultConfig.hero_title;
+      heroTitle.style.fontFamily = `${customFont}, sans-serif`;
+      heroTitle.style.fontSize = `${baseSize * 3.75}px`;
+      heroTitle.style.color = textColor;
+      
+      const heroSubtitle = document.getElementById('hero-subtitle');
+      heroSubtitle.textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+      heroSubtitle.style.fontFamily = `${customFont}, sans-serif`;
+      heroSubtitle.style.fontSize = `${baseSize * 1.25}px`;
+      
+      const heroCta = document.getElementById('hero-cta');
+      heroCta.textContent = config.hero_button || defaultConfig.hero_button;
+      heroCta.style.backgroundColor = primaryColor;
+      heroCta.style.fontFamily = `${customFont}, sans-serif`;
+      heroCta.style.fontSize = `${baseSize * 1.125}px`;
+      
+      const mainCta = document.getElementById('main-cta');
+      mainCta.textContent = config.cta_button || defaultConfig.cta_button;
+      mainCta.style.color = primaryColor;
+      mainCta.style.fontFamily = `${customFont}, sans-serif`;
+      mainCta.style.fontSize = `${baseSize * 1.125}px`;
+      
+      document.querySelectorAll('.button-primary').forEach(btn => {
+        if (btn.id === 'main-cta') {
+          btn.style.color = primaryColor;
+          btn.style.backgroundColor = 'white';
+        } else {
+          btn.style.backgroundColor = primaryColor;
+          btn.style.color = 'white';
+        }
+        btn.style.fontFamily = `${customFont}, sans-serif`;
+      });
+      
+      document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.style.backgroundColor = accentColor;
+      });
+      
+      const chatbotButton = document.querySelector('.chatbot-button');
+      chatbotButton.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      
+      document.querySelectorAll('input, textarea').forEach(input => {
+        input.style.fontFamily = `${customFont}, sans-serif`;
+      });
+      
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
+        heading.style.fontFamily = `${customFont}, sans-serif`;
+        heading.style.color = textColor;
+      });
+    }
+
+    function showProductDetails(productId) {
+      const product = productDetails[productId];
+      if (!product) return;
+      
+      const modal = document.getElementById('product-modal');
+      const title = document.getElementById('product-modal-title');
+      const content = document.getElementById('product-modal-content');
+      
+      title.textContent = product.name;
+      
+      content.innerHTML = `
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <div class="rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center p-8">
+              <img src="${product.image}" alt="${product.name}" class="w-full h-auto object-contain" onerror="this.src=''; this.alt='Image non disponible'; this.parentElement.innerHTML='<div class=\\'text-8xl\\'>${product.emoji}</div>';">
+            </div>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <p class="text-lg font-semibold opacity-70 mb-2">${product.subtitle}</p>
+              <div class="text-4xl font-bold mb-4" style="color: ${window.elementSdk?.config?.primary_color || defaultConfig.primary_color};">${product.price}</div>
+            </div>
+            
+            <p class="leading-relaxed">${product.description}</p>
+            
+            <button onclick="addToCart('${product.name}', '${product.price.replace('€', '').replace(',', '.')}')" class="button-primary w-full py-4 rounded-lg font-semibold text-lg text-white shadow-lg relative">
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        
+        <div class="mt-8 space-y-6">
+          <div class="p-6 rounded-xl border-2 border-gray-200">
+            <h3 class="text-xl font-bold mb-3">💚 Bénéfices</h3>
+            <ul class="space-y-2">
+              ${product.benefits.map(benefit => `<li class="flex items-start gap-2"><span class="text-green-600 font-bold">✓</span><span>${benefit}</span></li>`).join('')}
+            </ul>
+          </div>
+          
+          <div class="p-6 rounded-xl border-2 border-gray-200">
+            <h3 class="text-xl font-bold mb-3">🧪 Composition</h3>
+            <p class="leading-relaxed">${product.composition}</p>
+          </div>
+          
+          <div class="p-6 rounded-xl border-2 border-gray-200">
+            <h3 class="text-xl font-bold mb-3">📊 Analyse nutritionnelle</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              ${Object.entries(product.analysis).map(([key, value]) => `
+                <div class="text-center p-3 rounded-lg bg-gray-50">
+                  <div class="text-2xl font-bold" style="color: ${window.elementSdk?.config?.primary_color || defaultConfig.primary_color};">${value}</div>
+                  <div class="text-sm opacity-70 mt-1">${key}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          <div class="p-6 rounded-xl border-2 border-gray-200">
+            <h3 class="text-xl font-bold mb-3">🍽️ Guide d'alimentation</h3>
+            <p class="leading-relaxed">${product.feeding}</p>
+          </div>
+        </div>
+      `;
+      
+      modal.style.display = 'flex';
+    }
+
+    function addToCart(productName, price) {
+      cart.push({ name: productName, price: parseFloat(price) });
+      updateCartCount();
+      showToast('Produit ajouté au panier');
+      
+      const productModal = document.getElementById('product-modal');
+      if (productModal.style.display === 'flex') {
+        productModal.style.display = 'none';
+      }
+    }
+
+    window.showProductDetails = showProductDetails;
+
+    function updateCartCount() {
+      document.getElementById('cart-count').textContent = cart.length;
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 24px;
+        background: ${window.elementSdk?.config?.primary_color || defaultConfig.primary_color};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        z-index: 9999;
+        animation: fade-in-up 0.3s ease;
+      `;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'fade-in-up 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function showCart() {
+      const modal = document.getElementById('cart-modal');
+      const itemsContainer = document.getElementById('cart-items');
+      
+      if (cart.length === 0) {
+        itemsContainer.innerHTML = '<p class="text-center opacity-60 py-8">Votre panier est vide</p>';
+      } else {
+        itemsContainer.innerHTML = cart.map((item, index) => `
+          <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50">
+            <div>
+              <div class="font-semibold text-lg mb-1">${item.name}</div>
+              <div class="text-xl font-bold">${item.price.toFixed(2)}€</div>
+            </div>
+            <button onclick="removeFromCart(${index})" class="p-2 rounded-lg hover:bg-red-100 transition-colors" style="color: ${window.elementSdk?.config?.accent_color || defaultConfig.accent_color};">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        `).join('');
+      }
+      
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById('cart-total').textContent = `${total.toFixed(2)}€`;
+      
+      modal.style.display = 'flex';
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartCount();
+      showCart();
+    }
+
+    function handleChatMessage(message) {
+      const messagesContainer = document.getElementById('chat-messages');
+      const optionsContainer = document.getElementById('chat-options');
+      
+      const userMessage = document.createElement('div');
+      userMessage.className = 'chat-message';
+      userMessage.style.cssText = `background: ${window.elementSdk?.config?.primary_color || defaultConfig.primary_color}; color: white; margin-left: auto;`;
+      userMessage.textContent = message;
+      messagesContainer.appendChild(userMessage);
+      
+      setTimeout(() => {
+        const botMessage = document.createElement('div');
+        botMessage.className = 'chat-message bg-gray-100';
+        
+        if (chatStep === 0) {
+          if (message.toLowerCase().includes('chien')) {
+            chatData.animal = 'chien';
+            botMessage.innerHTML = '<p class="font-semibold mb-3">Parfait ! 🐕</p><p class="text-sm mb-3">Quel est l\'âge de votre chien ?</p><div class="flex flex-wrap gap-2"><button onclick="handleChatOption(\'Chiot (0-1 an)\')" class="px-4 py-2 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">Chiot</button><button onclick="handleChatOption(\'Adulte (1-7 ans)\')" class="px-4 py-2 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">Adulte</button><button onclick="handleChatOption(\'Senior (7+ ans)\')" class="px-4 py-2 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">Senior</button></div>';
+          } else if (message.toLowerCase().includes('chat')) {
+            chatData.animal = 'chat';
+            botMessage.innerHTML = '<p class="font-semibold mb-3">Excellent ! 🐱</p><p class="text-sm mb-3">Votre chat est-il stérilisé ?</p><div class="flex gap-2"><button onclick="handleChatOption(\'Oui, stérilisé\')" class="flex-1 px-4 py-2 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">Oui</button><button onclick="handleChatOption(\'Non, non stérilisé\')" class="flex-1 px-4 py-2 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">Non</button></div>';
+          }
+          chatStep = 1;
+        } else if (chatStep === 1) {
+          chatData.detail = message;
+          botMessage.innerHTML = '<p class="font-semibold">Merci pour ces informations ! ✨</p>';
+          
+          setTimeout(() => {
+            const recommendation = document.createElement('div');
+            recommendation.className = 'chat-message bg-gray-100';
+            
+            if (chatData.animal === 'chien') {
+              if (message.includes('Chiot')) {
+                recommendation.innerHTML = '<p class="font-semibold mb-2">Je recommande : Poulet & Riz 🍗</p><p class="text-sm mb-3">Parfaite pour les chiots en croissance.</p>';
+              } else if (message.includes('Senior')) {
+                recommendation.innerHTML = '<p class="font-semibold mb-2">Je recommande : Saumon & Patate douce 🐟</p><p class="text-sm mb-3">Formulée pour les chiens âgés avec oméga-3 et glucosamine.</p>';
+              } else {
+                recommendation.innerHTML = '<p class="font-semibold mb-2">Je recommande : Poulet & Riz ou Bœuf & Légumes</p><p class="text-sm mb-3">Selon le niveau d\'activité de votre chien.</p>';
+              }
+            } else {
+              if (message.includes('stérilisé')) {
+                recommendation.innerHTML = '<p class="font-semibold mb-2">Je recommande : Thon & Quinoa 🐠</p><p class="text-sm mb-3">Contrôle du poids avec L-carnitine.</p>';
+              } else {
+                recommendation.innerHTML = '<p class="font-semibold mb-2">Je recommande : Poulet & Courgette 🐔</p><p class="text-sm mb-3">Nutrition complète pour chats adultes.</p>';
+              }
+            }
+            
+            messagesContainer.appendChild(recommendation);
+            
+            const finalMessage = document.createElement('div');
+            finalMessage.className = 'chat-message bg-gray-100';
+            finalMessage.innerHTML = '<p class="text-sm mb-3">Découvrez cette recette dans notre section "Nos recettes" !</p><p class="text-sm font-semibold mb-2">Souhaitez-vous créer un compte pour suivre votre commande ?</p><div class="flex gap-2"><button onclick="openRegister()" class="flex-1 px-4 py-2 rounded-lg font-semibold hover:opacity-90 text-white text-sm" style="background: #EC4899;">Créer un compte</button><button onclick="document.getElementById(\'close-chatbot\').click()" class="flex-1 px-4 py-2 rounded-lg font-semibold hover:opacity-90 border-2 text-sm" style="border-color: #EC4899; color: #EC4899;">Plus tard</button></div>';
+            messagesContainer.appendChild(finalMessage);
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            chatStep = 0;
+            chatData = {};
+          }, 1000);
+        }
+        
+        messagesContainer.appendChild(botMessage);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }, 800);
+    }
+    
+    function addAnimal() {
+      const container = document.getElementById('animals-container');
+      const newAnimal = document.createElement('div');
+      newAnimal.className = 'animal-info p-4 rounded-lg mb-4';
+      newAnimal.style.background = '#FFF1F2';
+      newAnimal.innerHTML = `
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2 font-semibold text-sm">Nom de l'animal</label>
+            <input
+              type="text"
+              name="animal-name-${animalCount}"
+              placeholder="Ex: Luna"
+              class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500"
+            />
+          </div>
+          <div>
+            <label class="block mb-2 font-semibold text-sm">Type</label>
+            <select name="animal-type-${animalCount}" class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500">
+              <option value="chien">🐕 Chien</option>
+              <option value="chat">🐱 Chat</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-2 font-semibold text-sm">Âge (années)</label>
+            <input
+              type="number"
+              name="animal-age-${animalCount}"
+              min="0"
+              max="25"
+              placeholder="Ex: 2"
+              class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500"
+            />
+          </div>
+          <div>
+            <label class="block mb-2 font-semibold text-sm">Poids (kg)</label>
+            <input
+              type="number"
+              name="animal-weight-${animalCount}"
+              min="0"
+              step="0.1"
+              placeholder="Ex: 8"
+              class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-pink-500"
+            />
+          </div>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="mt-3 text-red-500 text-sm font-semibold hover:underline">
+          Supprimer cet animal
+        </button>
+      `;
+      container.appendChild(newAnimal);
+      animalCount++;
+    }
+    
+    function switchProfileTab(tab) {
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const loginTab = document.getElementById('tab-login');
+      const registerTab = document.getElementById('tab-register');
+      
+      if (tab === 'login') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        loginTab.classList.add('border-pink-500', 'text-pink-500');
+        loginTab.classList.remove('opacity-60');
+        registerTab.classList.remove('border-pink-500', 'text-pink-500');
+        registerTab.classList.add('opacity-60');
+      } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        registerTab.classList.add('border-pink-500', 'text-pink-500');
+        registerTab.classList.remove('opacity-60');
+        loginTab.classList.remove('border-pink-500', 'text-pink-500');
+        loginTab.classList.add('opacity-60');
+      }
+    }
+    
+    function openRegister() {
+      document.getElementById('chatbot-window').classList.remove('active');
+      document.getElementById('profile-modal').style.display = 'flex';
+      switchProfileTab('register');
+    }
+    
+    function selectPayment(method) {
+      selectedPayment = method;
+      document.querySelectorAll('.payment-method').forEach(btn => {
+        btn.style.borderColor = '#e5e7eb';
+      });
+      document.querySelector(`[data-method="${method}"]`).style.borderColor = '#EC4899';
+      document.querySelector(`[data-method="${method}"]`).style.borderWidth = '3px';
+    }
+    
+    window.addAnimal = addAnimal;
+    window.switchProfileTab = switchProfileTab;
+    window.openRegister = openRegister;
+    window.selectPayment = selectPayment;
+
+    window.handleChatOption = function(option) {
+      handleChatMessage(option);
+    };
+
+    window.removeFromCart = removeFromCart;
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => {
+      observer.observe(el);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+      document.getElementById('cart-button').addEventListener('click', showCart);
+      
+      document.getElementById('close-cart').addEventListener('click', function() {
+        document.getElementById('cart-modal').style.display = 'none';
+      });
+
+      document.getElementById('checkout-button').addEventListener('click', function() {
+        if (cart.length === 0) {
+          showToast('Votre panier est vide');
+          return;
+        }
+        showToast('Redirection vers le paiement...');
+      });
+
+      document.getElementById('profile-button').addEventListener('click', function() {
+        document.getElementById('profile-modal').style.display = 'flex';
+      });
+
+      document.getElementById('close-profile').addEventListener('click', function() {
+        document.getElementById('profile-modal').style.display = 'none';
+      });
+
+      document.getElementById('close-product-modal').addEventListener('click', function() {
+        document.getElementById('product-modal').style.display = 'none';
+      });
+
+      document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        showToast('Connexion réussie !');
+        setTimeout(() => {
+          document.getElementById('profile-modal').style.display = 'none';
+        }, 1500);
+      });
+      
+      document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        showToast('Compte créé avec succès !');
+        setTimeout(() => {
+          document.getElementById('profile-modal').style.display = 'none';
+        }, 1500);
+      });
+
+      document.getElementById('chatbot-button').addEventListener('click', function() {
+        document.getElementById('chatbot-window').classList.add('active');
+      });
+
+      document.getElementById('close-chatbot').addEventListener('click', function() {
+        document.getElementById('chatbot-window').classList.remove('active');
+      });
+
+      document.getElementById('chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+        if (message) {
+          handleChatMessage(message);
+          input.value = '';
+        }
+      });
+
+      document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageEl = document.getElementById('newsletter-message');
+        messageEl.textContent = 'Merci pour votre inscription !';
+        messageEl.style.color = window.elementSdk?.config?.primary_color || defaultConfig.primary_color;
+        messageEl.classList.remove('hidden');
+        this.reset();
+        setTimeout(() => messageEl.classList.add('hidden'), 3000);
+      });
+
+      document.getElementById('contact-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageEl = document.getElementById('contact-message-result');
+        messageEl.textContent = 'Message envoyé avec succès !';
+        messageEl.style.color = window.elementSdk?.config?.primary_color || defaultConfig.primary_color;
+        messageEl.classList.remove('hidden');
+        this.reset();
+        setTimeout(() => messageEl.classList.add('hidden'), 3000);
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    });
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_color || defaultConfig.secondary_color,
+              set: (value) => {
+                config.secondary_color = value;
+                window.elementSdk.setConfig({ secondary_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['brand_name', config.brand_name || defaultConfig.brand_name],
+          ['hero_title', config.hero_title || defaultConfig.hero_title],
+          ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+          ['hero_button', config.hero_button || defaultConfig.hero_button],
+          ['cta_button', config.cta_button || defaultConfig.cta_button]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ba273d5c2b9698e',t:'MTc2Nzc3ODM5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
